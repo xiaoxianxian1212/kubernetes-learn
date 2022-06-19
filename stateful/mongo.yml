@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  serviceName: mongodb
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:4.4
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /data/db # 容器里面的挂载路径
+              name: mongo-data    # 卷名字，必须跟下面定义的名字一致
+      volumes:
+        - name: mongo-data              # 卷名字
+          hostPath:
+            path: /tmp/mongo-data      # 节点上的路径
+            type: DirectoryOrCreate     # 指向一个目录，不存在时自动创建
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  selector:
+    app: mongodb
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - port: 27017
+      targetPort: 27017
