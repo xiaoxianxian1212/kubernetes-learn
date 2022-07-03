@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-example
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: tools.fun
+    http:
+      paths:
+      - path: /easydoc
+        pathType: Prefix
+        backend:
+          service:
+            name: service1
+            port:
+              number: 4200
+      - path: /svnbucket
+        pathType: Prefix
+        backend:
+          service:
+            name: service2
+            port:
+              number: 8080
